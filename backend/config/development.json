@@ -1,0 +1,15 @@
+{
+    "server": {
+        "port": 4000
+    },
+    "blockchain": {
+        "chainId": 56,
+        "blockTime": 5000
+    },
+    "logging": {
+        "level": "debug"
+    },
+    "database": {
+        "maxConnections": 5
+    }
+}

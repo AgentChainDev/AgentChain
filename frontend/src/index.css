@@ -1,0 +1,1041 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'JetBrains Mono', 'Fira Mono', 'Monaco', 'Consolas', monospace;
+  background: #000000;
+  color: #ffffff;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+#root {
+  height: 100vh;
+}
+
+/* Terminal scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ffffff;
+  border-radius: 0;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #cccccc;
+}
+
+/* Terminal cursor blink */
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 1;
+  }
+
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Typewriter effect */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+/* Glitch effect for logo */
+@keyframes glitch {
+  0% {
+    text-shadow: 0.05em 0 0 #ffffff, -0.03em -0.04em 0 #ff0000,
+      0.025em 0.04em 0 #0000ff;
+  }
+
+  15% {
+    text-shadow: 0.05em 0 0 #ffffff, -0.03em -0.04em 0 #ff0000,
+      0.025em 0.04em 0 #0000ff;
+  }
+
+  16% {
+    text-shadow: -0.05em -0.025em 0 #ffffff, 0.025em 0.035em 0 #ff0000,
+      -0.05em -0.05em 0 #0000ff;
+  }
+
+  49% {
+    text-shadow: -0.05em -0.025em 0 #ffffff, 0.025em 0.035em 0 #ff0000,
+      -0.05em -0.05em 0 #0000ff;
+  }
+
+  50% {
+    text-shadow: 0.05em 0.035em 0 #ffffff, 0.03em 0 0 #ff0000,
+      0 -0.04em 0 #0000ff;
+  }
+
+  99% {
+    text-shadow: 0.05em 0.035em 0 #ffffff, 0.03em 0 0 #ff0000,
+      0 -0.04em 0 #0000ff;
+  }
+
+  100% {
+    text-shadow: -0.05em 0 0 #ffffff, -0.025em -0.04em 0 #ff0000,
+      -0.04em -0.025em 0 #0000ff;
+  }
+}
+
+/* Matrix rain effect */
+@keyframes matrix-rain {
+  0% {
+    transform: translateY(-100vh);
+  }
+
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+/* ASCII art styling */
+.ascii-art {
+  font-family: 'Courier New', monospace;
+  white-space: pre;
+  line-height: 1.2;
+  color: #ffffff;
+}
+
+/* Wrapper used for JS autoscaling; provides consistent padding
+   so scaled ASCII art doesn't cause horizontal page scroll. */
+.ascii-wrapper {
+  width: 100%;
+  overflow: visible;
+  display: block;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+
+/* Responsive ASCII art scaling */
+.ascii-art {
+  /* Visual size is controlled by the JS autoscale wrapper; remove viewport-based scaling */
+  line-height: 1;
+  overflow: auto;
+  text-align: center;
+}
+
+.ascii-art.ascii-japanese {
+  /* Keep spacing for Japanese variant; sizing handled by autoscale JS */
+  letter-spacing: 6px;
+}
+
+/* Stack available-commands and terminal-warning vertically on small screens */
+.commands-warning {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  padding: 0 4px;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.available-commands {
+  /* allow shrinking to avoid pushing layout; base at 300px */
+  flex: 0 1 300px;
+  min-width: 0;
+  max-width: 350px;
+}
+
+.terminal-warning {
+  flex: 1;
+  max-width: min(100vw, 600px);
+  display: flex;
+  justify-content: center;
+}
+
+/* Allow flex children to shrink below their content width so long pre blocks don't expand the layout */
+.commands-warning>* {
+  min-width: 0;
+}
+
+/* Ensure the terminal pre scales to fit instead of scrolling */
+.terminal-warning pre {
+  display: block;
+  margin: 0;
+  box-sizing: border-box;
+  /* allow content to scale down to fit */
+  max-width: 100%;
+  overflow: visible;
+  white-space: pre;
+  /* keep monospace box by default */
+  padding: 8px 6px;
+  text-align: left;
+  word-break: normal;
+  /* ensure content scales to fit container */
+  transform-origin: top left;
+}
+
+@media (max-width: 768px) {
+  .commands-warning {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .available-commands {
+    min-width: 100%;
+    max-width: 100%;
+    order: 1;
+  }
+
+  .terminal-warning {
+    max-width: 100%;
+    order: 2;
+  }
+
+  /* On small devices align the terminal box to the left edge (remove left gutter) */
+  .terminal-warning pre {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+    padding-left: 4px;
+    padding-right: 4px;
+    overflow: visible;
+  }
+}
+
+/* On very small screens, prefer scaling down the terminal pre to preserve ASCII box drawing
+   (wrapping breaks the box characters). Reduce font-size responsively so the box fits
+   without forcing horizontal scroll. */
+@media (max-width: 480px) {
+  .terminal-warning pre {
+    white-space: pre;
+    /* preserve box drawing */
+    font-size: 11px;
+    line-height: 1.02;
+    /* remove left gutter so box sits flush on small screens */
+    margin-left: 0;
+    padding-left: 2px;
+    padding-right: 4px;
+    max-width: 100vw;
+    /* full viewport width */
+    box-sizing: border-box;
+    overflow: visible;
+    /* allow content to scale to fit */
+    transform-origin: top left;
+  }
+
+  /* slightly reduce ascii art on very small screens */
+  /* ascii-art sizing is handled by the autoscale wrapper; no responsive font-size here */
+}
+
+/* CLI prompt styling */
+.cli-prompt {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.cli-command {
+  color: #ffffff;
+}
+
+.cli-output {
+  color: #cccccc;
+}
+
+.cli-error {
+  color: #ff0000;
+}
+
+.cli-success {
+  color: #00ff00;
+}
+
+.cli-warning {
+  color: #ffff00;
+}
+
+/* Blockchain Interface Styles */
+.block-explorer {
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.explorer-header {
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+  margin-bottom: 20px;
+}
+
+.explorer-header h3 {
+  color: #00ff00;
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+
+.epoch-info {
+  color: #cccccc;
+  font-size: 12px;
+}
+
+/* Enhanced Explorer Grid */
+.explorer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.explorer-section {
+  border: 1px solid #333;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.explorer-section h4 {
+  color: #00ff00;
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+}
+
+.accounts-list,
+.blocks-list,
+.pending-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.account-item,
+.block-item,
+.pending-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #222;
+  font-size: 11px;
+}
+
+.account-item:last-child,
+.block-item:last-child,
+.pending-item:last-child {
+  border-bottom: none;
+}
+
+.account-address,
+.block-height,
+.tx-from {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.account-balance,
+.block-producer,
+.tx-amount {
+  color: #ffffff;
+}
+
+.block-txs,
+.tx-arrow,
+.tx-to {
+  color: #cccccc;
+}
+
+/* Transaction History Styles */
+.explorer-section-full {
+  border: 1px solid #333;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  margin-top: 20px;
+  grid-column: 1 / -1;
+}
+
+.transaction-history {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.transaction-item {
+  border: 1px solid #222;
+  padding: 10px;
+  margin-bottom: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.transaction-item:last-child {
+  margin-bottom: 0;
+}
+
+.tx-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-size: 10px;
+}
+
+.tx-hash {
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.tx-time {
+  color: #cccccc;
+}
+
+.tx-details {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.tx-fee {
+  color: #ffaa00;
+  font-size: 10px;
+  font-style: italic;
+}
+
+/* Responsive improvements */
+@media (max-width: 1200px) {
+  .explorer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .explorer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tx-details {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}
+
+/* Hide UTILITIES label on small screens to reduce clutter */
+@media (max-width: 768px) {
+  .utilities-label {
+    display: none !important;
+  }
+}
+
+/* Faucet Interface */
+.faucet-interface {
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  max-width: 500px;
+}
+
+.faucet-interface h3 {
+  color: #00ff00;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+.faucet-form {
+  border: 1px solid #333;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  color: #00ff00;
+  margin-bottom: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.cli-input {
+  width: 100%;
+  padding: 8px;
+  background: #000000;
+  border: 1px solid #333;
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  outline: none;
+}
+
+.cli-input:focus {
+  border-color: #00ff00;
+}
+
+.cli-button {
+  background: #000000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 10px 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cli-button:hover {
+  background: #00ff00;
+  color: #000000;
+}
+
+.faucet-info {
+  color: #cccccc;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.faucet-info p {
+  margin: 5px 0;
+}
+
+/* Send Transaction Interface */
+.send-interface {
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  max-width: 500px;
+}
+
+.send-interface h3 {
+  color: #00ff00;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+.send-form {
+  border: 1px solid #333;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Create Account Interface */
+.create-account-interface {
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+  max-width: 500px;
+}
+
+.create-account-interface h3 {
+  color: #00ff00;
+  margin: 0 0 20px 0;
+  font-size: 18px;
+}
+
+.create-form {
+  border: 1px solid #333;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .explorer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .faucet-interface,
+  .send-interface,
+  .create-account-interface {
+    max-width: 100%;
+  }
+
+  /* Prevent horizontal overflow on mobile */
+  * {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Specific fixes for long protocol text */
+  div[style*="marginLeft: '20px'"] {
+    word-break: break-word;
+    white-space: normal;
+    max-width: 100%;
+  }
+
+  /* Ensure all text containers respect mobile width */
+  div[style*="fontSize: '10px'"],
+  div[style*="fontSize: '11px'"] {
+    word-break: break-word;
+    white-space: normal;
+    max-width: 100%;
+  }
+
+  /* Protocol cards grid - stack vertically on mobile */
+  .protocol-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+  }
+}
+
+/* Network Statistics */
+.network-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid #333;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 10px;
+  border: 1px solid #222;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.stat-label {
+  color: #cccccc;
+  font-size: 10px;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: #00ff00;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+}
+
+.stat-value.online {
+  color: #00ff00;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+}
+
+/* Empty States */
+.empty-state {
+  color: #666666;
+  text-align: center;
+  padding: 40px 20px;
+  font-style: italic;
+  font-size: 12px;
+}
+
+/* Enhanced Faucet Interface */
+.faucet-info-top {
+  color: #cccccc;
+  font-size: 12px;
+  margin-bottom: 20px;
+  text-align: center;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid #333;
+}
+
+.amount-selector {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.amount-btn {
+  background: #000000;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 6px 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex: 1;
+  min-width: 60px;
+}
+
+.amount-btn:hover {
+  background: #00ff00;
+  color: #000000;
+}
+
+.faucet-info h4 {
+  color: #00ff00;
+  margin: 0 0 10px 0;
+  font-size: 12px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+}
+
+.validators-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.validator-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #222;
+  font-size: 11px;
+}
+
+.validator-item:last-child {
+  border-bottom: none;
+}
+
+.validator-name {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.validator-stats {
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+}
+
+/* Clickable Commands */
+.clickable-command {
+  cursor: pointer;
+  padding: 4px 8px;
+  margin: 2px 0;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.clickable-command:hover {
+  background: rgba(0, 255, 0, 0.1);
+  border-color: #00ff00;
+  color: #00ff00;
+  text-shadow: 0 0 5px #00ff00;
+}
+
+.clickable-command:active {
+  background: rgba(0, 255, 0, 0.2);
+  transform: translateY(1px);
+}
+
+/* Clickable Validators */
+.clickable-validator {
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  color: #ffff00;
+}
+
+.clickable-validator:hover {
+  background: rgba(255, 255, 0, 0.1);
+  border-color: #ffff00;
+  text-shadow: 0 0 5px #ffff00;
+}
+
+.clickable-validator:active {
+  background: rgba(255, 255, 0, 0.2);
+  transform: translateY(1px);
+}
+
+/* Start Exploring Button */
+.start-exploring-btn {
+  background: #000000;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  padding: 12px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.start-exploring-btn:hover {
+  background: #00ff00;
+  color: #000000;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.start-exploring-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+}
+
+/* Transaction Narrative Styles */
+.tx-narrative-section {
+  margin-top: 8px;
+  border-top: 1px solid #333;
+  padding-top: 8px;
+}
+
+.narrative-toggle {
+  background: none;
+  border: none;
+  color: #00ff00;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.narrative-toggle:hover:not(:disabled) {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+}
+
+.narrative-toggle:disabled {
+  color: #666;
+  cursor: not-allowed;
+}
+
+.narrative-content {
+  margin-top: 8px;
+  padding: 12px;
+  background: rgba(0, 255, 0, 0.05);
+  border-left: 3px solid #00ff00;
+  border-radius: 4px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #e0e0e0;
+  font-family: 'Inter', sans-serif;
+}
+
+.narrative-loading {
+  color: #888;
+  font-style: italic;
+  text-align: center;
+  padding: 8px;
+}
+
+/* Wallet Connection Styles */
+.wallet-connect-container {
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 8px;
+  background: #0a0a0a;
+  margin-bottom: 20px;
+}
+
+.wallet-connect-header {
+  color: #00ff00;
+  margin-bottom: 15px;
+  font-size: 16px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.wallet-error {
+  color: #ff4444;
+  background: #1a0000;
+  border: 1px solid #ff4444;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.wallet-connected {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.wallet-status-indicator {
+  width: 8px;
+  height: 8px;
+  background: #00ff00;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+.wallet-address {
+  color: #ffffff;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.wallet-disconnect-btn {
+  background: transparent;
+  color: #ff4444;
+  border: 1px solid #ff4444;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  transition: all 0.2s ease;
+}
+
+.wallet-disconnect-btn:hover {
+  background: #ff4444;
+  color: #000000;
+}
+
+.wallet-connect-info {
+  color: #cccccc;
+  font-size: 12px;
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.wallet-connect-btn {
+  background: transparent;
+  color: #00ff00;
+  border: 1px solid #00ff00;
+  padding: 12px 24px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  width: fit-content;
+  transition: all 0.2s ease;
+}
+
+.wallet-connect-btn:hover:not(:disabled) {
+  background: #00ff00;
+  color: #000000;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.wallet-connect-btn:disabled {
+  background: #333;
+  color: #666;
+  border-color: #333;
+  cursor: not-allowed;
+}
+
+.wallet-support-info {
+  font-size: 10px;
+  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+  margin-top: 10px;
+}
+
+/* Responsive navbar (hamburger) */
+.hamburger {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 8px;
+  transition: all 0.2s ease;
+}
+
+.hamburger:hover {
+  color: #00ff00;
+}
+
+.app-nav {
+  display: flex;
+  gap: 0;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block !important;
+  }
+
+  /* hide desktop nav by default on small screens; show when open */
+  .app-nav {
+    display: none !important;
+    position: fixed;
+    top: 56px;
+    /* adjust based on header height */
+    right: 12px;
+    background: #000000;
+    border: 1px solid #222;
+    padding: 8px;
+    flex-direction: column;
+    gap: 4px;
+    border-radius: 6px;
+    z-index: 9999;
+    min-width: 140px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+    animation: slideIn 0.2s ease-out;
+  }
+
+  .app-nav.open {
+    display: flex !important;
+  }
+
+  .app-nav button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    font-size: 13px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  .app-nav button:hover {
+    background: rgba(0, 255, 0, 0.1);
+    color: #00ff00;
+    transform: translateX(2px);
+  }
+
+  .app-nav button:active {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,36 @@
+# Compiled Smart Contracts
+
+This directory contains compiled Solidity smart contracts for AgentChain.
+
+Files in this directory are generated automatically during the build process and should not be edited manually.
+
+## Contents
+
+When contracts are compiled, you'll find:
+
+- `*.json` files containing contract ABI and bytecode
+- Deployment artifacts
+- Contract verification data
+
+## Usage
+
+These compiled contracts are used by:
+
+- The blockchain core for contract deployment
+- Frontend applications for contract interaction
+- Testing framework for contract validation
+- Development tools for debugging
+
+## Build Process
+
+Contracts are compiled using:
+
+```bash
+npm run compile-contracts
+```
+
+This process:
+1. Reads Solidity files from `src/contracts/solidity/`
+2. Compiles using the Solidity compiler
+3. Outputs JSON artifacts to this directory
+4. Generates TypeScript type definitions

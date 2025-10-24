@@ -1,0 +1,31 @@
+{
+    "server": {
+        "port": 4000,
+        "host": "0.0.0.0"
+    },
+    "blockchain": {
+        "chainId": 56,
+        "blockTime": 10000,
+        "gasLimit": "100000000",
+        "difficulty": "1000000"
+    },
+    "consensus": {
+        "validatorCount": 6,
+        "requiredValidators": 4,
+        "blockTimeout": 30000
+    },
+    "database": {
+        "maxConnections": 20,
+        "idleTimeout": 30000
+    },
+    "api": {
+        "rateLimit": {
+            "windowMs": 900000,
+            "max": 100
+        }
+    },
+    "logging": {
+        "level": "info",
+        "format": "json"
+    }
+}

@@ -1,0 +1,18 @@
+{
+    "server": {
+        "port": 4000
+    },
+    "blockchain": {
+        "chainId": 56,
+        "blockTime": 10000
+    },
+    "logging": {
+        "level": "info"
+    },
+    "api": {
+        "rateLimit": {
+            "windowMs": 300000,
+            "max": 1000
+        }
+    }
+}
